@@ -244,50 +244,57 @@ struct AlBhedCipher: Cipher {
     }
 }
 
-struct UnicodeCipher: Cipher {
+struct AlphabetIndexCipher: Cipher {
 
     /*
-     Encodes a plaintext message to unicode
-     @param: plaintext: String, the text to encode.
-     @param: secret: Not used.
-     @return: encoded: String, encoded plaintext.
-     */
-    func encode(_ plaintext: String, secret: String) -> String? {
-        
-        // Checks to see if the secret is valid.
-        var shiftBy = UInt32(secret)
-        shiftBy = 0
-        
-        
-        //Encodes
-        var encoded = ""
-        let lowercase = plaintext.lowercased()
-        for character in lowercase
-        {
-            let unicode = character.unicodeScalars.first!.value
-            encoded = encoded + String(unicode) + " "
-        }
-        // Encodes the plain text and makes everything uppercase.
-        return encoded
-    }
-    
-    /*
-     Decodes the plaintext message by doing a reverse dictionary lookup using
-     an extension of the dictionary class.
+     Encodes the plaintext message by indexing all the letters to
+     their corresponding position in the alphabet with A being 1.
+     Converts all of the characters to lowercase before performing the operation.
      @param: plaintext: String, the text to encode.
      @param: secret: String, a numerical value in String form to shift the plaintext by.
      @return: encoded: String, encoded plaintext.
      */
+    
+    func encode(_ plaintext: String, secret: String) -> String? {
+        // Unwrap the secret to see if it is valid.
+        guard let shiftBy = UInt32(secret) else {
+            return nil
+        }
+        
+        // Checks to see if the given string is alphanumeric.
+        let alpha = CharacterSet.alphanumerics
+        for uni in plaintext.unicodeScalars {
+            if !alpha.contains(uni) {
+                return nil
+            }
+        }
+        
+        var encoded = ""
+        for character in plaintext {
+            let unicode = character.unicodeScalars.first!.value
+            let shiftedUnicode = unicode * shiftBy
+            let shiftedCharacter = String(UnicodeScalar(UInt8(shiftedUnicode)))
+            encoded = encoded + shiftedCharacter
+        }
+        return encoded
+    }
+    
+    /*
+     Decodes the plaintext message by shifting the characters by a given value, the secret.
+     @param: plaintext: String, the text to encode.
+     @param: secret: String, a numerical value in String form to shift the plaintext by.
+     @return: decoded: String, decoded plaintexxt.
+     */
     func decrypt(_ plaintext: String, secret: String) -> String? {
-        
-        // Checks to see if the secret is valid.
-        var shiftBy = UInt32(secret)
-        shiftBy = 0
-        
-        //Decoding process
+        guard let shiftBy = UInt32(secret) else {
+            return nil
+        }
         var decoded = ""
-        for character in plaintext
-        {
+        for character in plaintext {
+            let unicode = character.unicodeScalars.first!.value
+            let shiftedUnicode = unicode / shiftBy
+            let shiftedCharacter = String(UnicodeScalar(UInt8(shiftedUnicode)))
+            decoded = decoded + shiftedCharacter
         }
         return decoded
     }

@@ -6,7 +6,7 @@ struct CipherFactory {
         "Ceasar": CeaserCipher(),
         "Alphanumeric Ceaser": CeaserCipher(),
         "Al Bhed": AlBhedCipher(),
-        "Unicode": UnicodeCipher()
+        //"Multiplicative": UnicodeCipher()
     ]
 
     func cipher(for key: String) -> Cipher {
