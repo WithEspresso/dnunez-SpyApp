@@ -190,10 +190,6 @@ struct AlBhedCipher: Cipher {
      */
     func encode(_ plaintext: String, secret: String) -> String? {
         
-        // Checks to see if the secret is valid.
-        var shiftBy = UInt32(secret)
-        shiftBy = 0
-        
         //Encodes
         var encoded = ""
         let lowercase = plaintext.lowercased()
@@ -222,10 +218,6 @@ struct AlBhedCipher: Cipher {
      */
     func decrypt(_ plaintext: String, secret: String) -> String? {
         
-        // Checks to see if the secret is valid.
-        var shiftBy = UInt32(secret)
-        shiftBy = 0
-        
         //Decoding process
         var decoded = ""
         for character in plaintext
@@ -244,28 +236,70 @@ struct AlBhedCipher: Cipher {
     }
 }
 
-struct UnicodeCipher: Cipher {
+struct AlphabetIndexCipher: Cipher {
 
+    // Maps each letter to a number.
+    let alphabetIndex = [
+            "a": "1",
+            "b": "2",
+            "c": "3",
+            "d": "4",
+            "e": "5",
+            "f": "6",
+            "g": "7",
+            "h": "8",
+            "i": "9",
+            "j": "10",
+            "k": "11",
+            "l": "12",
+            "m": "13",
+            "n": "14",
+            "o": "15",
+            "p": "16",
+            "q": "17",
+            "r": "18",
+            "s": "19",
+            "t": "20",
+            "u": "21",
+            "v": "22",
+            "w": "23",
+            "x": "24",
+            "y": "25",
+            "z": "26",
+            "0": "a",
+            "1": "b",
+            "2": "c",
+            "3": "d",
+            "4": "e",
+            "5": "c",
+            "6": "d",
+            "7": "e",
+            "8": "f",
+            "9": "g",
+    ]
+    
     /*
-     Encodes a plaintext message to unicode
+     Encodes a plaintext message to their corresponding position in the alphabet.
      @param: plaintext: String, the text to encode.
      @param: secret: Not used.
      @return: encoded: String, encoded plaintext.
      */
     func encode(_ plaintext: String, secret: String) -> String? {
         
-        // Checks to see if the secret is valid.
-        var shiftBy = UInt32(secret)
-        shiftBy = 0
-        
-        
         //Encodes
         var encoded = ""
         let lowercase = plaintext.lowercased()
         for character in lowercase
         {
-            let unicode = character.unicodeScalars.first!.value
-            encoded = encoded + String(unicode) + " "
+            let stringLetter = String(character)
+            if let translatedNumber = alphabetIndex[stringLetter]
+            {
+                encoded = encoded + translatedNumber + " "
+            }
+            else
+            {
+                encoded = encoded + stringLetter
+            }
         }
         // Encodes the plain text and makes everything uppercase.
         return encoded
@@ -273,21 +307,23 @@ struct UnicodeCipher: Cipher {
     
     /*
      Decodes the plaintext message by doing a reverse dictionary lookup using
-     an extension of the dictionary class.
+     an extension of the dictionary class. Each letter corresponds to a number.
      @param: plaintext: String, the text to encode.
      @param: secret: String, a numerical value in String form to shift the plaintext by.
      @return: encoded: String, encoded plaintext.
      */
     func decrypt(_ plaintext: String, secret: String) -> String? {
         
-        // Checks to see if the secret is valid.
-        var shiftBy = UInt32(secret)
-        shiftBy = 0
-        
         //Decoding process
         var decoded = ""
-        for character in plaintext
-        {
+        for character in plaintext {
+            let stringLetter = String(character)
+            if let key = alphabetIndex.lookupValueByKey(forValue: stringLetter) {
+                decoded = decoded + key
+            }
+            else {
+                decoded = decoded + stringLetter
+            }
         }
         return decoded
     }

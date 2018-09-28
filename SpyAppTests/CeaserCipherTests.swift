@@ -89,26 +89,30 @@ class AlBhedCipherTests: XCTestCase {
     }
 }
 
-class UnicodeCipherTests: XCTestCase {
+class AlphabetIndexCipherTests: XCTestCase {
     
     var cipher: Cipher!
     
     override func setUp() {
         super.setUp()
-        cipher = UnicodeCipher()
+        cipher = AlphabetIndexCipher()
     }
     
-    func test_oneCharacterStirngGetsMappedToSelfWith_0_secret() {
+    func test_FirstLettergetsMappedtoFirstIndex() {
         let plaintext = "A"
         
         let result = cipher.encode(plaintext, secret: "0")
+        let expected_result = "1"
         
-        XCTAssertEqual(plaintext, result)
+        XCTAssertEqual(expected_result, result)
     }
     
-    func test_nonNumericInputForSecret() {
-        let result = cipher.encode("b", secret: "nonNumericString")
+    func test_FirstNumbergetsMappedtoFirstLetter() {
+        let plaintext = "0"
         
-        XCTAssertNil(result)
+        let result = cipher.encode(plaintext, secret: "0")
+        let expected_result = "a"
+        
+        XCTAssertEqual(expected_result, result)
     }
 }
