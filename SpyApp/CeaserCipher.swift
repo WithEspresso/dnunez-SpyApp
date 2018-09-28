@@ -316,7 +316,8 @@ struct AlphabetIndexCipher: Cipher {
         
         //Decoding process
         var decoded = ""
-        for character in plaintext {
+        let encodedArray = plaintext.components(separatedBy: " ")
+        for character in encodedArray {
             let stringLetter = String(character)
             if let key = alphabetIndex.lookupValueByKey(forValue: stringLetter) {
                 decoded = decoded + key
